@@ -41,5 +41,5 @@ func run() error {
 
 	const fs = 48000
 	pinkNoise := spat.PinkNoise(samples, fs)
-	return spat.WriteFile(outPath, pinkNoise)
+	return spat.WriteDXXFile(outPath, pinkNoise)
 }

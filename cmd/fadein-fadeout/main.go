@@ -69,7 +69,7 @@ func FadeinFadeout(subject, soundName string, moveWidth, moveVelocity, endAngle 
 	fadeinFilter, fadeoutFilter := spat.GenerateFadeinFadeoutFilter(overlapSamples)
 
 	// 音データの読み込み
-	sound, err := spat.ReadFile(soundName)
+	sound, err := spat.ReadDXXFile(soundName)
 	if err != nil {
 		return err
 	}
@@ -97,7 +97,7 @@ func FadeinFadeout(subject, soundName string, moveWidth, moveVelocity, endAngle 
 
 				// SLTFの読み込み（十分に長い白色雑音を想定）
 				SLTFName := fmt.Sprintf("%s/SLTF/SLTF_%d_%s.DDB", subject, (endAngle+dataAngle)%3600, LR)
-				SLTF, err := spat.ReadFile(SLTFName)
+				SLTF, err := spat.ReadDXXFile(SLTFName)
 				if err != nil {
 					return err
 				}
@@ -131,7 +131,7 @@ func FadeinFadeout(subject, soundName string, moveWidth, moveVelocity, endAngle 
 
 			// DDBへ出力
 			outName := fmt.Sprintf("%s/move_judge_w%03d_mt%03d_%s_%d_%s.DDB", outDir, moveWidth, moveVelocity, direction, endAngle, LR)
-			if err := spat.WriteFile(outName, out); err != nil {
+			if err := spat.WriteDXXFile(outName, out); err != nil {
 				return err
 			}
 			_, err = fmt.Fprintf(os.Stderr, "%s: length=%d\n", outName, len(out))

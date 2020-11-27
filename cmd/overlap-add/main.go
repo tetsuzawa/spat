@@ -65,13 +65,13 @@ func OverlapAdd(subject, soundName string, moveWidth, moveVelocity, endAngle int
 	var moveSamplesPerDeg int = moveSamples / moveWidth
 
 	// 音データの読み込み
-	sound, err := spat.ReadFile(soundName)
+	sound, err := spat.ReadDXXFile(soundName)
 	if err != nil {
 		return err
 	}
 
 	SLTFName := fmt.Sprintf("%s/SLTF/SLTF_%d_%s.DDB", subject, 0, "L")
-	SLTF, err := spat.ReadFile(SLTFName)
+	SLTF, err := spat.ReadDXXFile(SLTFName)
 	if err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func OverlapAdd(subject, soundName string, moveWidth, moveVelocity, endAngle int
 
 				// SLTFの読み込み
 				SLTFName := fmt.Sprintf("%s/SLTF/SLTF_%d_%s.DDB", subject, (endAngle+dataAngle)%3600, LR)
-				SLTF, err := spat.ReadFile(SLTFName)
+				SLTF, err := spat.ReadDXXFile(SLTFName)
 				if err != nil {
 					return err
 				}
@@ -115,7 +115,7 @@ func OverlapAdd(subject, soundName string, moveWidth, moveVelocity, endAngle int
 
 			// DDBへ出力
 			outName := fmt.Sprintf("%s/move_judge_w%03d_mt%03d_%s_%d_%s.DDB", outDir, moveWidth, moveVelocity, direction, endAngle, LR)
-			if err := spat.WriteFile(outName, moveOut); err != nil {
+			if err := spat.WriteDXXFile(outName, moveOut); err != nil {
 				return err
 			}
 			_, err = fmt.Fprintf(os.Stderr, "%s: length=%d\n", outName, len(moveOut))

@@ -40,10 +40,10 @@ func run() error {
 	fadeinFiltName := args[1]
 	fadeoutFiltName := args[2]
 	fadeinFilt, fadeoutFilt := spat.GenerateFadeinFadeoutFilter(samples)
-	if err := spat.WriteFile(fadeinFiltName, fadeinFilt); err != nil {
+	if err := spat.WriteDXXFile(fadeinFiltName, fadeinFilt); err != nil {
 		return err
 	}
-	if err := spat.WriteFile(fadeoutFiltName, fadeoutFilt); err != nil {
+	if err := spat.WriteDXXFile(fadeoutFiltName, fadeoutFilt); err != nil {
 		return err
 	}
 	return nil
