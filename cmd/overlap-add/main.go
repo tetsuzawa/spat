@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/tetsuzawa/spat"
@@ -14,8 +15,7 @@ import (
 func init() {
 	log.SetFlags(0)
 	flag.Usage = func() {
-		log.Printf("Usage of %s:\n", os.Args[0])
-		log.Printf("overlap-add subject sound_file(.DXX) move_width move_velocity end_angle outdir\n")
+		log.Printf("Usage: %s overlap-add subject sound_file(.DXX) move_width move_velocity end_angle outdir\n", filepath.Base(os.Args[0]))
 		flag.PrintDefaults()
 	}
 }
