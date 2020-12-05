@@ -109,13 +109,8 @@ func FFTPrime(array []T, size, n, sign int) {
 	omega2 := make([]complex128, length)
 
 	for i := 0; i < length; i++ {
-		//omega[i].real(fft_cos(i, length));
-		//omega[i].imag(-fft_sin(i, length));
 		omega[i] = complex(FFTCos(i, length), -FFTSin(i, length))
-
-		//omega2[i].real(fft_cos(powerMod(ig, i % (p - 1), p), p));
-		//omega2[i].imag(sign * fft_sin(powerMod(ig, i % (p - 1), p), p));
-		omega2[i] = complex(FFTCos(powerMod(ig, i%(p-1), p), p), sign*FFTSin(powerMod(ig, i%(p-1), p), p))
+		omega2[i] = complex(FFTCos(powerMod(ig, i%(p-1), p), p), float64(sign)*FFTSin(powerMod(ig, i%(p-1), p), p))
 	}
 	FFT2(omega2, temp, omega)
 	for i := 0; i < n; i++ {
@@ -140,8 +135,6 @@ func FFTPrime(array []T, size, n, sign int) {
 		FFT2(data, temp, omega)
 		/*add array[i*p] term*/
 		for j := 0; j < length; j++ {
-			//data[j].real(data[j].real() /length + array[i * p].real());
-			//data[j].imag(data[j].imag() /length + array[i * p].imag());
 			data[j] = complex(real(data[j])/float64(length)+real(array[i*p]), imag(data[j])/float64(length)+imag(array[i*p]))
 
 		}
@@ -161,7 +154,7 @@ func FFTPrime(array []T, size, n, sign int) {
 	}
 }
 
-func FFTCOs(n, m int) float64 {
+func FFTCos(n, m int) float64 {
 	if n == 0 {
 		return 1;
 	}
