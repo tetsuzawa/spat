@@ -1,5 +1,7 @@
 package spat
 
+import "math"
+
 type T = complex128
 
 func SizedDFT(array, temp, omega []complex128, size, n int) {
@@ -157,6 +159,44 @@ func FFTPrime(array []T, size, n, sign int) {
 			array[i*p+powerMod(ig, j, p)] = data[j];
 		}
 	}
+}
+
+func FFTCOs(n, m int) float64 {
+	if n == 0 {
+		return 1;
+	}
+	if n == m { /*2 Pi*/ return 1;
+	}
+	if m%n == 0 {
+		if m/n == 2 { /*Pi*/ return -1;
+		}
+		if m/n == 4 { /*Pi/2*/ return 0;
+		}
+	}
+	if m%(m-n) == 0 {
+		if m/(m-n) == 4 { /*3 Pi/2*/ return 0;
+		}
+	}
+	return math.Cos(2 * math.Pi * float64(n) / float64(m));
+}
+
+func FFTSin(n, m int) float64 {
+	if n == 0 {
+		return 0;
+	}
+	if n == m { /*2 Pi*/ return 0;
+	}
+	if m%n == 0 {
+		if m/n == 2 { /*Pi*/ return 0;
+		}
+		if m/n == 4 { /*Pi/2*/ return 1;
+		}
+	}
+	if m%(m-n) == 0 {
+		if m/(m-n) == 4 { /*3 Pi/2*/ return -1;
+		}
+	}
+	return math.Sin(2 * math.Pi * float64(n) / float64(m));
 }
 
 func primePrimitiveRoot(p int) int {
