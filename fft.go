@@ -237,11 +237,11 @@ func BaseFFT(array []T, size, sign int) {
 	}
 }
 
-func FFT(array []T, size, sign int) {
+func FFT(array []T, size int) {
 	BaseFFT(array, size, Forward)
 }
 
-func IFFT(array []T, size, sign int) {
+func IFFT(array []T, size int) {
 	BaseFFT(array, size, Backward)
 	for i := 0; i < size; i++ {
 		array[i] = complex(real(array[i])/float64(size), imag(array[i])/float64(size))
