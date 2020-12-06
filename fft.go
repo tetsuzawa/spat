@@ -2,7 +2,11 @@ package spat
 
 import "math"
 
-const FFTPrimeThreshold = 256
+const (
+	FFTPrimeThreshold = 256
+	Forward           = -1
+	Backward          = 1
+)
 
 type T = complex128
 
@@ -156,7 +160,7 @@ func FFTPrime(array []T, size, n, sign int) {
 	}
 }
 
-func FFT(array []T, size, sign int) {
+func BaseFFT(array []T, size, sign int) {
 	temp := make([]complex128, size)
 	omega := make([]complex128, size)
 	for i := 0; i < size; i++ {
@@ -230,6 +234,17 @@ func FFT(array []T, size, sign int) {
 			array[i] = temp[i]
 		}
 		n = q
+	}
+}
+
+func FFT(array []T, size, sign int) {
+	BaseFFT(array, size, Forward)
+}
+
+func IFFT(array []T, size, sign int) {
+	BaseFFT(array, size, Backward)
+	for i := 0; i < size; i++ {
+		array[i] = complex(real(array[i])/float64(size), imag(array[i])/float64(size))
 	}
 }
 
