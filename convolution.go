@@ -1,6 +1,7 @@
 package spat
 
 import (
+	"errors"
 	"log"
 
 	"github.com/mjibson/go-dsp/dsputils"
@@ -27,4 +28,19 @@ func LinearConvolutionTimeDomain(x, y []float64) []float64 {
 		}
 	}
 	return res
+}
+
+func LinearConvolutionTimeDomainFloat32s(dst, x1, x2 []float32) ([]float32, error) {
+	convLen := len(x1) + len(x2) - 1
+	if dst == nil {
+		dst = make([]float32, convLen)
+	} else if len(dst) < convLen {
+		return dst, errors.New("length of dst must be at least len(x1) + len(x2) - 1")
+	}
+	for i := 0; i < len(x1); i++ {
+		for j := i; j < len(x2)+i; j++ {
+			dst[j] += x1[i] * x2[j-i]
+		}
+	}
+	return dst, nil
 }

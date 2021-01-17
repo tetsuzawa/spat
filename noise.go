@@ -29,6 +29,14 @@ func PinkNoise(samples, fs int) []float64 {
 	return out
 }
 
+func RandNoise(samples int) []float64 {
+	out := make([]float64, samples)
+	for i := range out {
+		out[i] = rand.Float64()
+	}
+	return out
+}
+
 func Sum(vs []float64) float64 {
 	sum := 0.0
 	for _, v := range vs {

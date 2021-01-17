@@ -3,7 +3,8 @@ bin/dxxconv \
 bin/fadein-fadeout \
 bin/make_fadein_fadeout_filter_fourier \
 bin/make_pinknoise \
-bin/overlap-add
+bin/overlap-add \
+bin/overlap_add_realtime
 
 .PHONY: all clean
 

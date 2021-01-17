@@ -38,6 +38,13 @@ func BytesToInt16(b []byte) (int16, error) {
 	return v, err
 }
 
+func BytesToInt64(b []byte) (int64, error) {
+	var v int64
+	buf := bytes.NewReader(b)
+	err := binary.Read(buf, binary.LittleEndian, &v)
+	return v, err
+}
+
 func Int16ToBytes(v int16) ([]byte, error) {
 	buf := &bytes.Buffer{}
 	err := binary.Write(buf, binary.LittleEndian, v)
@@ -290,4 +297,26 @@ func MinFloat64s(data []float64) float64 {
 		}
 	}
 	return min
+}
+
+func NormFloat32s(data []float32) {
+	_, min, max := AbsMinMaxFloat32s(data)
+	for i, v := range data {
+		vv := (AbsFloat32(v) - min) / (max - min)
+		data[i] = vv
+		if v < 0 {
+			vv = -vv
+		}
+	}
+}
+
+func NormFloat64s(data []float64) {
+	_, min, max := AbsMinMaxFloat64s(data)
+	for i, v := range data {
+		vv := (AbsFloat64(v) - min) / (max - min)
+		data[i] = vv
+		if v < 0 {
+			vv = -vv
+		}
+	}
 }
