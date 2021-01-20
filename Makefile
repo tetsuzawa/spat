@@ -3,7 +3,8 @@ bin/dxxconv \
 bin/fadein-fadeout \
 bin/make_fadein_fadeout_filter_fourier \
 bin/make_pinknoise \
-bin/overlap-add
+bin/overlap-add \
+bin/overlap-add-middle
 
 .PHONY: all clean
 
@@ -32,3 +33,6 @@ bin/make_pinknoise: *.go cmd/make_pinknoise/*.go
 
 bin/overlap-add: *.go cmd/overlap-add/*.go
 	go build -o $@ ./cmd/overlap-add/
+
+bin/overlap-add-middle: *.go cmd/overlap-add-middle/*.go
+	go build -o $@ ./cmd/overlap-add-middle/
