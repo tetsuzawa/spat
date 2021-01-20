@@ -189,6 +189,9 @@ func ReadDXXFile(filename string) ([]float64, error) {
 	}
 
 	b, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
 	r := bytes.NewReader(b)
 	length := r.Len() / dt.ByteLen()
 	return Read(r, dt, length)
