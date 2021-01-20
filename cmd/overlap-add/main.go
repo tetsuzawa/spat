@@ -130,3 +130,21 @@ func OverlapAdd(subject, soundName string, moveWidth, moveVelocity, endAngle int
 	}
 	return nil
 }
+
+func calcAngles(moveWidth, endAngle int, clockwise bool) []int {
+	angles := make([]int, moveWidth)
+	for i := 0; i < moveWidth; i++ {
+		dataAngle := i % (moveWidth * 2)
+		if dataAngle > moveWidth {
+			dataAngle = moveWidth*2 - dataAngle
+		}
+		if !clockwise {
+			dataAngle = -dataAngle
+		}
+		if dataAngle < 0 {
+			dataAngle += 3600
+		}
+		angles[i] = (endAngle + dataAngle) % 3600
+	}
+	return angles
+}
