@@ -15,7 +15,7 @@ import (
 func init() {
 	log.SetFlags(0)
 	flag.Usage = func() {
-		log.Printf("Usage: %s overlap-add subject sound_file(.DXX) move_width move_velocity end_angle outdir\n", filepath.Base(os.Args[0]))
+		log.Printf("Usage: %s subject sound_file(.DXX) move_width move_velocity start_angle outdir\n", filepath.Base(os.Args[0]))
 		flag.PrintDefaults()
 	}
 }
@@ -44,15 +44,15 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	endAngle, err := strconv.Atoi(args[4])
+	startAngle, err := strconv.Atoi(args[4])
 	if err != nil {
 		return err
 	}
 	outDir := args[5]
-	return OverlapAdd(subject, soundName, moveWidth, moveVelocity, endAngle, outDir)
+	return OverlapAdd(subject, soundName, moveWidth, moveVelocity, startAngle, outDir)
 }
 
-func OverlapAdd(subject, soundName string, moveWidth, moveVelocity, endAngle int, outDir string) error {
+func OverlapAdd(subject, soundName string, moveWidth, moveVelocity, startAngle int, outDir string) error {
 	// サンプリング周波数 [sample/sec]
 	const samplingFreq = 48000
 	// 移動時間 [sec]
@@ -79,42 +79,33 @@ func OverlapAdd(subject, soundName string, moveWidth, moveVelocity, endAngle int
 	for _, direction := range []string{"c", "cc"} {
 		for _, LR := range []string{"L", "R"} {
 			moveOut := make([]float64, moveSamples+len(SLTF)-1)
-			usedAngles := make([]int, moveWidth)
 
-			for angle := 0; angle < moveWidth; angle++ {
-				// 畳み込むSLTFの角度を決定
-				dataAngle := angle % (moveWidth * 2)
-				if dataAngle > moveWidth {
-					dataAngle = moveWidth*2 - dataAngle
-				}
-				if direction == "cc" {
-					dataAngle = -dataAngle
-				}
-				dataAngle = dataAngle
-				if dataAngle < 0 {
-					dataAngle += 3600
-				}
-				// 使用した角度を記録（ログ出力用）
-				usedAngles[angle] = (endAngle + dataAngle) % 3600
+			var clockwise bool
+			if direction == "c" {
+				clockwise = true
+			}
+			// 使用する角度の計算
+			angles := calcAngles(moveWidth, startAngle, clockwise)
 
+			for i, angle := range angles {
 				// SLTFの読み込み
-				SLTFName := fmt.Sprintf("%s/SLTF/SLTF_%d_%s.DDB", subject, (endAngle+dataAngle)%3600, LR)
+				SLTFName := fmt.Sprintf("%s/SLTF/SLTF_%d_%s.DDB", subject, angle, LR)
 				SLTF, err := spat.ReadDXXFile(SLTFName)
 				if err != nil {
 					return err
 				}
 
 				// 音データと伝達関数の畳込み
-				cutSound := sound[moveSamplesPerDeg*angle : moveSamplesPerDeg*(angle+1)]
+				cutSound := sound[moveSamplesPerDeg*i : moveSamplesPerDeg*(i+1)]
 				soundSLTF := spat.LinearConvolutionTimeDomain(cutSound, SLTF)
 				// Overlap-Add
-				for i, v := range soundSLTF {
-					moveOut[moveSamplesPerDeg*angle+i] += v
+				for j, v := range soundSLTF {
+					moveOut[moveSamplesPerDeg*i+j] += v
 				}
 			}
 
 			// DDBへ出力
-			outName := fmt.Sprintf("%s/move_judge_w%03d_mt%03d_%s_%d_%s.DDB", outDir, moveWidth, moveVelocity, direction, endAngle, LR)
+			outName := fmt.Sprintf("%s/move_judge_w%03d_mt%03d_%s_%d_%s.DDB", outDir, moveWidth, moveVelocity, direction, startAngle, LR)
 			if err := spat.WriteDXXFile(outName, moveOut); err != nil {
 				return err
 			}
@@ -122,7 +113,7 @@ func OverlapAdd(subject, soundName string, moveWidth, moveVelocity, endAngle int
 			if err != nil {
 				return err
 			}
-			_, err := fmt.Fprintf(os.Stderr, "used angle:%v\n", usedAngles)
+			_, err := fmt.Fprintf(os.Stderr, "angles:%v\n", angles)
 			if err != nil {
 				return err
 			}
@@ -143,8 +134,8 @@ func calcAngles(moveWidth, startAngle int, clockwise bool) []int {
 		}
 		if dataAngle < 0 {
 			dataAngle += 3600
-			}
-			angles[i] = (startAngle + dataAngle) % 3600
 		}
+		angles[i] = (startAngle + dataAngle) % 3600
+	}
 	return angles
 }
