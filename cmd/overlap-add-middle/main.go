@@ -15,7 +15,7 @@ import (
 func init() {
 	log.SetFlags(0)
 	flag.Usage = func() {
-		log.Printf("Usage: %s overlap-add subject sound_file(.DXX) move_width move_velocity end_angle outdir\n", filepath.Base(os.Args[0]))
+		log.Printf("Usage: %s subject sound_file(.DXX) move_width move_velocity angle out_dir\n", filepath.Base(os.Args[0]))
 		flag.PrintDefaults()
 	}
 }
@@ -80,10 +80,7 @@ func OverlapAdd(subject, soundName string, moveWidth, moveVelocity, middleAngle 
 		for _, LR := range []string{"L", "R"} {
 			moveOut := make([]float64, moveSamples+len(SLTF)-1)
 
-			var clockwise bool
-			if direction == "c" {
-				clockwise = true
-			}
+			clockwise := direction == "c"
 			// 使用する角度の計算
 			angles := calcAngles(moveWidth, middleAngle, clockwise)
 
